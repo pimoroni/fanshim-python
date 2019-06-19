@@ -1,4 +1,4 @@
 [run]
-source = {{LIBNAME}}
+source = fanshim
 omit =
     .tox/*

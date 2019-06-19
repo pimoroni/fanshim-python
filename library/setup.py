@@ -22,33 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
-classifiers = ['Development Status :: 4 - Beta',
-               'Operating System :: POSIX :: Linux',
-               'License :: OSI Approved :: MIT License',
-               'Intended Audience :: Developers',
-               'Programming Language :: Python :: 2.6',
-               'Programming Language :: Python :: 2.7',
-               'Programming Language :: Python :: 3',
-               'Topic :: Software Development',
-               'Topic :: System :: Hardware']
+from setuptools import setup
 
 setup(
-    name='{{LIBNAME}}',
-    version='0.0.1',
-    author='Philip Howard',
-    author_email='phil@pimoroni.com',
-    description="""{{DESCRIPTION}}""",
-    long_description=open('README.rst').read() + '\n' + open('CHANGELOG.txt').read(),
-    license='MIT',
-    keywords='Raspberry Pi',
-    url='http://www.pimoroni.com',
-    project_urls={'GitHub': 'https://www.github.com/pimoroni/{{LIBNAME}}-python'},
-    classifiers=classifiers,
-    packages=['{{LIBNAME}}'],
+    packages=['fanshim'],
     install_requires=[]
 )

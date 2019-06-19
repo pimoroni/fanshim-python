@@ -1,19 +1,19 @@
-# {{TITLE}}
+# Fan Shim
 
-[![Build Status](https://travis-ci.com/pimoroni/{{LIBNAME}}-python.svg?branch=master)](https://travis-ci.com/pimoroni/{{LIBNAME}}-python)
-[![Coverage Status](https://coveralls.io/repos/github/pimoroni/{{LIBNAME}}-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/{{LIBNAME}}-python?branch=master)
-[![PyPi Package](https://img.shields.io/pypi/v/{{LIBNAME}}.svg)](https://pypi.python.org/pypi/{{LIBNAME}})
-[![Python Versions](https://img.shields.io/pypi/pyversions/{{LIBNAME}}.svg)](https://pypi.python.org/pypi/{{LIBNAME}})
+[![Build Status](https://travis-ci.com/pimoroni/fanshim-python.svg?branch=master)](https://travis-ci.com/pimoroni/fanshim-python)
+[![Coverage Status](https://coveralls.io/repos/github/pimoroni/fanshim-python/badge.svg?branch=master)](https://coveralls.io/github/pimoroni/fanshim-python?branch=master)
+[![PyPi Package](https://img.shields.io/pypi/v/fanshim.svg)](https://pypi.python.org/pypi/fanshim)
+[![Python Versions](https://img.shields.io/pypi/pyversions/fanshim.svg)](https://pypi.python.org/pypi/fanshim)
 
 # Installing
 
 Stable library from PyPi:
 
-* Just run `sudo pip install {{LIBNAME}}`
+* Just run `sudo pip install fanshim`
 
 Latest/development library from GitHub:
 
-* `git clone https://github.com/pimoroni/{{LIBNAME}}-python`
-* `cd {{LIBNAME}}-python`
+* `git clone https://github.com/pimoroni/fanshim-python`
+* `cd fanshim-python`
 * `sudo ./install.sh`
 
