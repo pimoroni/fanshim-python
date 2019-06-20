@@ -7,13 +7,20 @@ from threading import Thread
 __version__ = '0.0.1'
 
 
-class FANShim():
-    def __init__(self):
-        self._pin_fancontrol = 18
-        self._pin_button = 17
+class FanShim():
+    def __init__(self, pin_fancontrol=18, pin_button=17):
+        """FAN Shim.
+
+        :param pin_fancontrol: BCM pin for fan on/off
+        :param pin_button: BCM pin for button
+
+        """
+        self._pin_fancontrol = pin_fancontrol
+        self._pin_button = pin_button
         self._button_press_handler = None
         self._button_release_handler = None
         self._button_hold_handler = None
+        self._button_hold_time = 2.0
         self._t_poll = None
 
         atexit.register(self._cleanup)
@@ -27,20 +34,23 @@ class FANShim():
         plasma.set_light_count(1)
         plasma.set_light(0, 0, 0, 0)
 
-        self.start()
+        self.start_polling()
 
-    def start(self):
+    def start_polling(self):
+        """Start button polling."""
         if self._t_poll is None:
             self._t_poll = Thread(target=self._run)
             self._t_poll.daemon = True
             self._t_poll.start()
 
-    def stop(self):
+    def stop_polling(self):
+        """Stop button polling."""
         if self._t_poll is not None:
             self._running = False
             self._t_poll.join()
 
     def on_press(self, handler=None):
+        """Attach function to button press event."""
         def attach_handler(handler):
             self._button_press_handler = handler
 
@@ -50,6 +60,7 @@ class FANShim():
             return attach_handler
 
     def on_release(self, handler=None):
+        """Attach function to button release event."""
         def attach_handler(handler):
             self._button_release_handler = handler
 
@@ -59,6 +70,7 @@ class FANShim():
             return attach_handler
 
     def on_hold(self, handler=None):
+        """Attach function to button hold event."""
         def attach_handler(handler):
             self._button_hold_handler = handler
 
@@ -76,9 +88,11 @@ class FANShim():
         self._button_hold_time = hold_time
 
     def get_fan(self):
+        """Get current fan state."""
         return GPIO.input(self._pin_fancontrol)
 
     def toggle_fan(self):
+        """Toggle fan state."""
         return self.set_fan(False if self.get_fan() else True)
 
     def set_fan(self, fan_state):
@@ -91,6 +105,13 @@ class FANShim():
         return True if fan_state else False
 
     def set_light(self, r, g, b):
+        """Set LED.
+    
+        :param r: Red (0-255)
+        :param g: Green (0-255)
+        :param b: Blue (0-255)
+    
+        """
         plasma.set_light(0, r, g, b)
         plasma.show()
 

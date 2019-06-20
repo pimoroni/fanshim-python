@@ -1,5 +1,5 @@
 import signal
-from fanshim import FANShim
+from fanshim import FanShim
 
 """
 This example attaches basic pressed, released and held handlers for Fan SHIM's button.
@@ -11,7 +11,7 @@ Since the "release" handler receives 1 argument - "was_held" - you don't need to
 the "held" handler at all if you're just doing a standard short/long press action.
 """
 
-fanshim = FANShim()
+fanshim = FanShim()
 
 
 def update_led(state):

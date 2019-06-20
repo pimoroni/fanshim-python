@@ -1,8 +1,8 @@
-from fanshim import FANShim
+from fanshim import FanShim
 import time
 import colorsys
 
-fanshim = FANShim()
+fanshim = FanShim()
 fanshim.set_fan(False)
 
 try:

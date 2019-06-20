@@ -1,4 +1,4 @@
-from fanshim import FANShim
+from fanshim import FanShim
 import psutil
 import argparse
 import time
@@ -38,7 +38,7 @@ parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from
 
 args = parser.parse_args()
 
-fanshim = FANShim()
+fanshim = FanShim()
 fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
 armed = True
