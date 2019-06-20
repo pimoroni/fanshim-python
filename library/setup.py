@@ -26,5 +26,5 @@ from setuptools import setup
 
 setup(
     packages=['fanshim'],
-    install_requires=[]
+    install_requires=['plasmalights']
 )
