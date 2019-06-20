@@ -117,8 +117,9 @@ class FANShim():
                     Thread(target=self._button_release_handler, args=(self._hold_fired,)).start()
 
             if current == 0:
-                if callable(self._button_hold_handler) and not self._hold_fired and (time.time() - self._t_pressed) > self._button_hold_time:
-                    Thread(target=self._button_hold_handler).start()
+                if not self._hold_fired and (time.time() - self._t_pressed) > self._button_hold_time:
+                    if callable(self._button_hold_handler):
+                        Thread(target=self._button_hold_handler).start()
                     self._hold_fired = True
 
             last = current
