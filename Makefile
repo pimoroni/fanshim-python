@@ -1,5 +1,5 @@
-LIBRARY_VERSION=$(shell cat library/setup.py | grep version | awk -F"'" '{print $$2}')
-LIBRARY_NAME=$(shell cat library/setup.py | grep name | awk -F"'" '{print $$2}')
+LIBRARY_VERSION=$(shell cat library/setup.cfg | grep version | awk -F" = " '{print $$2}')
+LIBRARY_NAME=$(shell cat library/setup.cfg | grep name | awk -F" = " '{print $$2}')
 
 .PHONY: usage install uninstall
 usage:

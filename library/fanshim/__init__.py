@@ -9,13 +9,13 @@ __version__ = '0.0.1'
 
 class FANShim():
     def __init__(self):
-        self._pin_fancontrol = 18 
+        self._pin_fancontrol = 18
         self._pin_button = 17
         self._button_press_handler = None
         self._button_release_handler = None
         self._button_hold_handler = None
         self._t_poll = None
-        
+
         atexit.register(self._cleanup)
 
         GPIO.setwarnings(False)
@@ -42,7 +42,7 @@ class FANShim():
 
     def on_press(self, handler=None):
         def attach_handler(handler):
-            self._button_press_handler =handler
+            self._button_press_handler = handler
 
         if handler is not None:
             attach_handler(handler)
@@ -69,7 +69,7 @@ class FANShim():
 
     def set_hold_time(self, hold_time):
         """Set the button hold time in seconds.
-        
+
         :param hold_time: Amount of time button must be held to trigger on_hold (in seconds)
 
         """
@@ -83,9 +83,9 @@ class FANShim():
 
     def set_fan(self, fan_state):
         """Set the fan on/off.
-        
+
         :param fan_state: True/False for on/off
-        
+
         """
         GPIO.output(self._pin_fancontrol, True if fan_state else False)
         return True if fan_state else False
@@ -125,4 +125,3 @@ class FANShim():
             last = current
 
             time.sleep(0.001)
-

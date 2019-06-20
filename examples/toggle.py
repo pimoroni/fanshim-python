@@ -13,6 +13,7 @@ the "held" handler at all if you're just doing a standard short/long press actio
 
 fanshim = FANShim()
 
+
 def update_led(state):
     if state:
         fanshim.set_light(0, 255, 0)
@@ -24,6 +25,7 @@ def update_led(state):
 def release_handler(was_held):
     state = fanshim.toggle_fan()
     update_led(state)
+
 
 try:
     update_led(fanshim.get_fan())

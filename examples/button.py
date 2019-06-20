@@ -20,7 +20,6 @@ fanshim.set_hold_time(1.0)
 @fanshim.on_press()
 def press_handler():
     print("Pressed")
-    was_held = False
 
 
 @fanshim.on_release()

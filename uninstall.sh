@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LIBRARY_VERSION=`cat library/setup.py | grep version | awk -F"'" '{print $2}'`
-LIBRARY_NAME=`cat library/setup.py | grep name | awk -F"'" '{print $2}'`
+LIBRARY_VERSION=`cat library/setup.cfg | grep version | awk -F" = " '{print $2}'`
+LIBRARY_NAME=`cat library/setup.cfg | grep name | awk -F" = " '{print $2}'`
 
 printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Uninstaller\n\n"
 
