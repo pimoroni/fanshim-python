@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import plasma
+import atexit
 from threading import Thread
 
 __version__ = '0.0.1'
@@ -15,11 +16,14 @@ class FANShim():
         self._button_hold_handler = None
         self._t_poll = None
         
+        atexit.register(self._cleanup)
+
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._pin_fancontrol, GPIO.OUT)
-        GPIO.setup(self._pin_button, GPIO.IN)
+        GPIO.setup(self._pin_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+        plasma.set_clear_on_exit(True)
         plasma.set_light_count(1)
         plasma.set_light(0, 0, 0, 0)
 
@@ -34,7 +38,7 @@ class FANShim():
     def stop(self):
         if self._t_poll is not None:
             self._running = False
-            self._t_poll.stop()
+            self._t_poll.join()
 
     def on_press(self, handler=None):
         def attach_handler(handler):
@@ -89,6 +93,9 @@ class FANShim():
     def set_light(self, r, g, b):
         plasma.set_light(0, r, g, b)
         plasma.show()
+
+    def _cleanup(self):
+        self.stop()
 
     def _run(self):
         self._running = True
