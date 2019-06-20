@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from fanshim import FanShim
 import psutil
 import argparse
@@ -35,6 +36,7 @@ def set_automatic(status):
 parser = argparse.ArgumentParser()
 parser.add_argument('--threshold', type=float, default=37.0, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from threshold before fan is disabled')
+parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 
 args = parser.parse_args()
 
@@ -78,6 +80,6 @@ try:
         if abs(last_change - t) > args.hysteresis and armed:
             if set_fan(t >= args.threshold):
                 last_change = t
-        time.sleep(1.0)
+        time.sleep(args.delay)
 except KeyboardInterrupt:
     pass

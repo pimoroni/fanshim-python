@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from fanshim import FanShim
 import time
 import colorsys
