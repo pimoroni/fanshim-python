@@ -106,11 +106,11 @@ class FanShim():
 
     def set_light(self, r, g, b):
         """Set LED.
-    
+
         :param r: Red (0-255)
         :param g: Green (0-255)
         :param b: Blue (0-255)
-    
+
         """
         plasma.set_light(0, r, g, b)
         plasma.show()
