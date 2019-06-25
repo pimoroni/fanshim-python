@@ -20,7 +20,7 @@ WantedBy=multi-user.target
 EOF
 
 echo "Installing psutil"
-pip3 install psutil
+pip3 install psutil fanshim
 
 echo "Installing service to: $SERVICE_PATH"
 echo "$UNIT_FILE" > $SERVICE_PATH
