@@ -10,13 +10,25 @@ if [ $(id -u) -ne 0 ]; then
 	exit 1
 fi
 
+function apt_pkg_install {
+	PACKAGE=$1
+	printf "Checking for $PACKAGE\n"
+	dpkg -L $PACKAGE > /dev/null 2>&1
+	if [ "$?" == "1" ]; then
+		sudo apt update
+		sudo apt install -y python-setuptools
+	fi
+}
+
 cd library
 
 printf "Installing for Python 2..\n"
+apt_pkg_install python-setuptools
 python setup.py install
 
 if [ -f "/usr/bin/python3" ]; then
 	printf "Installing for Python 3..\n"
+	apt_pkg_install python3-setuptools
 	python3 setup.py install
 fi
 
