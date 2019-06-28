@@ -1,3 +1,7 @@
+0.0.2
+
+* Fix: Fix error on exit
+
 0.0.1
 -----
 
