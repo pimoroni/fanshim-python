@@ -7,6 +7,6 @@ def test_setup():
     sys.modules['RPi.GPIO'] = mock.Mock()
     sys.modules['plasma'] = mock.Mock()
 
-    from fanshim import FANShim
-    fanshim = FANShim()
+    from fanshim import FanShim
+    fanshim = FanShim()
     del fanshim
