@@ -116,7 +116,7 @@ class FanShim():
         plasma.show()
 
     def _cleanup(self):
-        self.stop()
+        self.stop_polling()
 
     def _run(self):
         self._running = True
