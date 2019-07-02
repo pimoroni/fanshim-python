@@ -16,19 +16,19 @@ function apt_pkg_install {
 	dpkg -L $PACKAGE > /dev/null 2>&1
 	if [ "$?" == "1" ]; then
 		sudo apt update
-		sudo apt install -y python-setuptools
+		sudo apt install -y python-setuptools python-dev python-psutil
 	fi
 }
 
 cd library
 
 printf "Installing for Python 2..\n"
-apt_pkg_install python-setuptools
+apt_pkg_install python-setuptools python-dev python-psutil
 python setup.py install
 
 if [ -f "/usr/bin/python3" ]; then
 	printf "Installing for Python 3..\n"
-	apt_pkg_install python3-setuptools
+	apt_pkg_install python3-setuptools python3-dev python3-psutil
 	python3 setup.py install
 fi
 
