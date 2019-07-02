@@ -5,13 +5,6 @@ LIBRARY_NAME=`grep name library/setup.cfg | awk -F" = " '{print $2}'`
 PY2_DEPS=`grep py2deps library/setup.cfg | awk -F" = " '{print $2}'`
 PY3_DEPS=`grep py3deps library/setup.cfg | awk -F" = " '{print $2}'`
 
-printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
-
-if [ $(id -u) -ne 0 ]; then
-	printf "Script must be run as root. Try 'sudo ./install.sh'\n"
-	exit 1
-fi
-
 function apt_pkg_install {
 	PACKAGES=()
 	for PACKAGE in "$@"; do
@@ -28,6 +21,13 @@ function apt_pkg_install {
 		sudo apt install -y $PACKAGES
 	fi
 }
+
+printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
+
+if [ $(id -u) -ne 0 ]; then
+	printf "Script must be run as root. Try 'sudo ./install.sh'\n"
+	exit 1
+fi
 
 cd library
 
