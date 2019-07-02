@@ -11,12 +11,19 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 function apt_pkg_install {
-	PACKAGE=$1
-	printf "Checking for $PACKAGE\n"
-	dpkg -L $PACKAGE > /dev/null 2>&1
-	if [ "$?" == "1" ]; then
+	PACKAGES=()
+	for PACKAGE in "$@"; do
+		printf "Checking for $PACKAGE\n"
+		dpkg -L $PACKAGE > /dev/null 2>&1
+		if [ "$?" == "1" ]; then
+			PACKAGES+=("$PACKAGE")
+		fi
+	done
+	PACKAGES="${PACKAGES[@]}"
+	if ! [ "$PACKAGES" == "" ]; then
+		echo "Installing missing packages: $PACKAGES"
 		sudo apt update
-		sudo apt install -y python-setuptools python-dev python-psutil
+		sudo apt install -y $PACKAGES
 	fi
 }
 
