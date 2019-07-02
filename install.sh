@@ -1,7 +1,9 @@
 #!/bin/bash
 
-LIBRARY_VERSION=`cat library/setup.cfg | grep version | awk -F" = " '{print $2}'`
-LIBRARY_NAME=`cat library/setup.cfg | grep name | awk -F" = " '{print $2}'`
+LIBRARY_VERSION=`grep version library/setup.cfg | awk -F" = " '{print $2}'`
+LIBRARY_NAME=`grep name library/setup.cfg | awk -F" = " '{print $2}'`
+PY2_DEPS=`grep py2deps library/setup.cfg | awk -F" = " '{print $2}'`
+PY3_DEPS=`grep py3deps library/setup.cfg | awk -F" = " '{print $2}'`
 
 printf "$LIBRARY_NAME $LIBRARY_VERSION Python Library: Installer\n\n"
 
@@ -30,12 +32,12 @@ function apt_pkg_install {
 cd library
 
 printf "Installing for Python 2..\n"
-apt_pkg_install python-setuptools python-dev python-psutil
+apt_pkg_install $PY2_DEPS
 python setup.py install
 
 if [ -f "/usr/bin/python3" ]; then
 	printf "Installing for Python 3..\n"
-	apt_pkg_install python3-setuptools python3-dev python3-psutil
+	apt_pkg_install $PY3_DEPS
 	python3 setup.py install
 fi
 
