@@ -1,9 +1,18 @@
 #!/bin/bash
 
-LIBRARY_VERSION=`grep version library/setup.cfg | awk -F" = " '{print $2}'`
-LIBRARY_NAME=`grep name library/setup.cfg | awk -F" = " '{print $2}'`
-PY2_DEPS=`grep py2deps library/setup.cfg | awk -F" = " '{print $2}'`
-PY3_DEPS=`grep py3deps library/setup.cfg | awk -F" = " '{print $2}'`
+eval `python - <<EOF
+from configparser import ConfigParser
+c = ConfigParser()
+c.read('library/setup.cfg')
+a = dict(c['pimoroni'])
+a.update(c['metadata'])
+print("""
+LIBRARY_NAME="{name}"
+LIBRARY_VERSION="{version}"
+PY3DEPS="{py3deps}"
+PY2DEPS="{py2deps}"
+""".format(**a))
+EOF`
 
 function apt_pkg_install {
 	PACKAGES=()
