@@ -42,5 +42,5 @@ sudo systemctl stop pimoroni-fanshim.service
 If you need to change the threshold, hysteresis or delay you can add them as arguments to the installer:
 
 ```
-sudo ./install-service <threshold> <hysteresis> <delay>
+sudo ./install-service.sh <threshold> <hysteresis> <delay>
 ```
