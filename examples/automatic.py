@@ -3,6 +3,14 @@ from fanshim import FanShim
 import psutil
 import argparse
 import time
+import signal
+import sys
+
+
+def clean_exit(signum, frame):
+    set_fan(False)
+    fanshim.set_light(0, 0, 0)
+    sys.exit(0)
 
 
 def update_led(state):
@@ -71,6 +79,8 @@ def held_handler():
         time.sleep(0.04)
         update_led(enabled)
 
+
+signal.signal(signal.SIGTERM, clean_exit)
 
 try:
     update_led(fanshim.get_fan())
