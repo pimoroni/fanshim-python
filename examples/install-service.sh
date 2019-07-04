@@ -2,7 +2,12 @@
 THRESHOLD=${1:-36}
 HYSTERESIS=${2:-2}
 DELAY=${3:-2}
+PREEMPT=${4:-false}
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
+
+if $PREEMPT; then
+    DO_PREEMPT='--preempt'
+fi
 
 read -r -d '' UNIT_FILE << EOF
 [Unit]
@@ -12,7 +17,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/automatic.py --threshold $THRESHOLD --hysteresis $HYSTERESIS --delay $DELAY
+ExecStart=$(pwd)/automatic.py --threshold $THRESHOLD --hysteresis $HYSTERESIS --delay $DELAY $DO_PREEMPT
 Restart=on-failure
 
 [Install]

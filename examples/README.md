@@ -24,6 +24,7 @@ The script supports three arguments:
 * `--threshold N` the temperature at which the fan should turn on, in degrees C
 * `--hysteresis N` the change in temperature needed to trigger a fan state change, in degrees C
 * `--delay N` the delay between subsequent temperature readings, in seconds
+* `--preempt` preemptively kick in the fan when the CPU frequency is raised
 
 You can use systemd or crontab to run this example as a fan controller service on your Pi.
 
@@ -43,4 +44,10 @@ If you need to change the threshold, hysteresis or delay you can add them as arg
 
 ```
 sudo ./install-service.sh <threshold> <hysteresis> <delay>
+```
+
+To enable CPU-frequency based control:
+
+```
+sudo ./install-service.sh <threshold> <hysteresis> <delay> true
 ```
