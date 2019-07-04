@@ -24,6 +24,11 @@ def get_cpu_temp():
     return psutil.sensors_temperatures()['cpu-thermal'][0].current
 
 
+def get_cpu_freq():
+    freq = psutil.cpu_freq()
+    return freq
+
+
 def set_fan(status):
     global enabled
     changed = False
@@ -45,6 +50,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--threshold', type=float, default=37.0, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from threshold before fan is disabled')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
+parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 
 args = parser.parse_args()
 
@@ -86,9 +92,13 @@ try:
     update_led(fanshim.get_fan())
     while True:
         t = get_cpu_temp()
-        print("Current: {:05.02f} Target: {:05.02f} Automatic: {} On: {}".format(t, args.threshold, armed, enabled))
+        f = get_cpu_freq()
+        print("Current: {:05.02f} Target: {:05.02f} Freq {: 5.02f} Automatic: {} On: {}".format(t, args.threshold, f.current / 1000.0, armed, enabled))
         if abs(last_change - t) > args.hysteresis and armed:
-            if set_fan(t >= args.threshold):
+            enable = (t >= args.threshold)
+            if args.preempt:
+                enable = enable or (int(f.current) == int(f.max))
+            if set_fan(enable):
                 last_change = t
         time.sleep(args.delay)
 except KeyboardInterrupt:
