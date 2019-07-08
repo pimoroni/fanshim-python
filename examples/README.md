@@ -43,11 +43,11 @@ sudo systemctl stop pimoroni-fanshim.service
 If you need to change the threshold, hysteresis or delay you can add them as arguments to the installer:
 
 ```
-sudo ./install-service.sh <threshold> <hysteresis> <delay>
+sudo ./install-service.sh --threshold <threshold> --hysteresis <hysteresis> --delay <delay>
 ```
 
 To enable CPU-frequency based control:
 
 ```
-sudo ./install-service.sh <threshold> <hysteresis> <delay> true
+sudo ./install-service.sh --threshold <threshold> --hysteresis <hysteresis> --delay <delay> --preempt
 ```
