@@ -7,6 +7,18 @@ import signal
 import sys
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--threshold', type=float, default=37.0, help='Temperature threshold in degrees C to enable fan')
+parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from threshold before fan is disabled')
+parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
+parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
+parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
+parser.add_argument('--nobutton', action='store_true', default=False, help='Disable button input')
+parser.add_argument('--noled', action='store_true', default=False, help='Disable LED control')
+
+args = parser.parse_args()
+
+
 def clean_exit(signum, frame):
     set_fan(False)
     fanshim.set_light(0, 0, 0)
@@ -14,6 +26,8 @@ def clean_exit(signum, frame):
 
 
 def update_led(state):
+    if args.noled:
+        return
     if state:
         fanshim.set_light(0, 255, 0)
     else:
@@ -46,15 +60,6 @@ def set_automatic(status):
     last_change = 0
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=float, default=37.0, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from threshold before fan is disabled')
-parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
-parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
-parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
-
-args = parser.parse_args()
-
 fanshim = FanShim()
 fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
@@ -68,23 +73,26 @@ if t >= args.threshold:
     set_fan(True)
 
 
-@fanshim.on_release()
-def release_handler(was_held):
-    global armed
-    if was_held:
-        set_automatic(not armed)
-    elif not armed:
-        set_fan(not enabled)
+if not args.nobutton:
+    @fanshim.on_release()
+    def release_handler(was_held):
+        global armed
+        if was_held:
+            set_automatic(not armed)
+        elif not armed:
+            set_fan(not enabled)
 
 
-@fanshim.on_hold()
-def held_handler():
-    for _ in range(3):
-        fanshim.set_light(0, 0, 255)
-        time.sleep(0.04)
-        fanshim.set_light(0, 0, 0)
-        time.sleep(0.04)
-        update_led(enabled)
+    @fanshim.on_hold()
+    def held_handler():
+        if args.noled:
+             return
+        for _ in range(3):
+            fanshim.set_light(0, 0, 255)
+            time.sleep(0.04)
+            fanshim.set_light(0, 0, 0)
+            time.sleep(0.04)
+            update_led(enabled)
 
 
 signal.signal(signal.SIGTERM, clean_exit)

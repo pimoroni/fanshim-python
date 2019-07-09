@@ -51,3 +51,5 @@ To enable CPU-frequency based control:
 ```
 sudo ./install-service.sh --threshold <threshold> --hysteresis <hysteresis> --delay <delay> --preempt
 ```
+
+You can also add `--noled` to disable LED control and/or `--nobutton` to disable button input.

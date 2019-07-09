@@ -8,7 +8,7 @@ SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 while [[ $# -gt 0 ]]; do
 	K="$1"
 	case $K in
-		-p|--preempt)
+	-p|--preempt)
 		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
 			PREEMPT="$2"
 			shift
@@ -17,29 +17,58 @@ while [[ $# -gt 0 ]]; do
 		fi
 		shift
 		;;
-		-t|--threshold)
+	-l|--noled)
+		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
+			NOLED="$2"
+			shift
+		else
+			NOLED="yes"
+		fi
+		shift
+		;;
+	-b|--nobutton)
+		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
+			NOBUTTON="$2"
+			shift
+		else
+			NOBUTTON="yes"
+		fi
+		shift
+		;;
+	-t|--threshold)
 		THRESHOLD="$2"
 		shift
 		shift
 		;;
-		-h|--hysteresis)
+	-h|--hysteresis)
 		HYSTERESIS="$2"
 		shift
 		shift
 		;;
-		-d|--delay)
+	-d|--delay)
 		DELAY="$2"
 		shift
 		shift
 		;;
-		*)
+	*)
 		shift
 	esac
 done
 
+EXTRA_ARGS=""
+
 if [ "$PREEMPT" == "yes" ]; then
-    DO_PREEMPT='--preempt'
+	EXTRA_ARGS+=' --preempt'
 fi
+
+if [ "$NOLED" == "yes" ]; then
+	EXTRA_ARGS+=' --noled'
+fi
+
+if [ "$NOBUTTON" == "yes" ]; then
+	EXTRA_ARGS+=' --nobutton'
+fi
+
 
 cat << EOF
 Setting up with:
@@ -47,9 +76,11 @@ Threshold: $THRESHOLD C
 Hysteresis: $HYSTERESIS C
 Delay: $DELAY seconds
 Preempt: $PREEMPT
+No LED: $NOLED
+No Button: $NOBUTTON
 
 To change these options, run:
-sudo ./install-service --threshold <n> --hysteresis <n> --delay <n> (--preempt)
+sudo ./install-service --threshold <n> --hysteresis <n> --delay <n> (--preempt) (--noled) (--nobutton)
 
 Or edit: $SERVICE_PATH
 
@@ -64,7 +95,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/automatic.py --threshold $THRESHOLD --hysteresis $HYSTERESIS --delay $DELAY $DO_PREEMPT
+ExecStart=$(pwd)/automatic.py --threshold $THRESHOLD --hysteresis $HYSTERESIS --delay $DELAY $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
@@ -86,5 +117,5 @@ printf "\nInstalling service to: $SERVICE_PATH\n"
 echo "$UNIT_FILE" > $SERVICE_PATH
 systemctl daemon-reload
 systemctl enable --no-pager pimoroni-fanshim.service
-systemctl start --no-pager pimoroni-fanshim.service
+systemctl restart --no-pager pimoroni-fanshim.service
 systemctl status --no-pager pimoroni-fanshim.service
