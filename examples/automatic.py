@@ -55,7 +55,7 @@ parser.add_argument('--verbose', action='store_true', default=False, help='Outpu
 
 args = parser.parse_args()
 
-fanshim = FanShim()
+fanshim = FanShim(poll_time=args.delay/10)
 fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
 armed = True

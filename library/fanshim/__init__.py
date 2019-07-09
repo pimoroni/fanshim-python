@@ -8,7 +8,7 @@ __version__ = '0.0.2'
 
 
 class FanShim():
-    def __init__(self, pin_fancontrol=18, pin_button=17):
+    def __init__(self, pin_fancontrol=18, pin_button=17, poll_time=0.001):
         """FAN Shim.
 
         :param pin_fancontrol: BCM pin for fan on/off
@@ -21,6 +21,7 @@ class FanShim():
         self._button_release_handler = None
         self._button_hold_handler = None
         self._button_hold_time = 2.0
+        self._poll_time = poll_time
         self._t_poll = None
 
         atexit.register(self._cleanup)
@@ -145,4 +146,4 @@ class FanShim():
 
             last = current
 
-            time.sleep(0.001)
+            time.sleep(self._poll_time)
