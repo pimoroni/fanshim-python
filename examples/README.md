@@ -21,8 +21,8 @@ The LED should light up Green when the fan is enabled, and Red when it's not.
 
 The script supports three arguments:
 
-* `--threshold N` the temperature at which the fan should turn on, in degrees C
-* `--hysteresis N` the change in temperature needed to trigger a fan state change, in degrees C
+* `--threshold N` the temperature at which the fan should turn on, in degrees C (default 55)
+* `--hysteresis N` the change in temperature needed to trigger a fan state change, in degrees C (default 5)
 * `--delay N` the delay between subsequent temperature readings, in seconds
 * `--preempt` preemptively kick in the fan when the CPU frequency is raised
 

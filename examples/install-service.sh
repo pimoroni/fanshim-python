@@ -1,6 +1,6 @@
 #!/bin/bash
-THRESHOLD=36
-HYSTERESIS=2
+THRESHOLD=55
+HYSTERESIS=5
 DELAY=2
 PREEMPT="no"
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service

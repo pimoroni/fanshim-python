@@ -8,8 +8,8 @@ import sys
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=float, default=37.0, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--hysteresis', type=float, default=2.0, help='Distance from threshold before fan is disabled')
+parser.add_argument('--threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
+parser.add_argument('--hysteresis', type=float, default=5.0, help='Distance from threshold before fan is disabled')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
