@@ -35,8 +35,6 @@ class FanShim():
         plasma.set_light_count(1)
         plasma.set_light(0, 0, 0, 0)
 
-        self.start_polling()
-
     def start_polling(self):
         """Start button polling."""
         if self._t_poll is None:
@@ -54,6 +52,7 @@ class FanShim():
         """Attach function to button press event."""
         def attach_handler(handler):
             self._button_press_handler = handler
+            self.start_polling()
 
         if handler is not None:
             attach_handler(handler)
@@ -64,6 +63,7 @@ class FanShim():
         """Attach function to button release event."""
         def attach_handler(handler):
             self._button_release_handler = handler
+            self.start_polling()
 
         if handler is not None:
             attach_handler(handler)
@@ -74,6 +74,7 @@ class FanShim():
         """Attach function to button hold event."""
         def attach_handler(handler):
             self._button_hold_handler = handler
+            self.start_polling()
 
         if handler is not None:
             attach_handler(handler)
