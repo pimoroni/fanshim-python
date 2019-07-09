@@ -4,30 +4,6 @@ CONFIG=/boot/config.txt
 DATESTAMP=`date "+%Y-%M-%d-%H-%M-%S"`
 CONFIG_BACKUP=false
 
-CONFIG_VARS=`python - <<EOF
-from configparser import ConfigParser
-c = ConfigParser()
-c.read('library/setup.cfg')
-p = dict(c['pimoroni'])
-# Convert multi-line config entries into bash arrays
-for k in p.keys():
-    fmt = '"{}"'
-    if '\n' in p[k]:
-        p[k] = "'\n\t'".join(p[k].split('\n')[1:])
-        fmt = "('{}')"
-    p[k] = fmt.format(p[k])
-print("""
-LIBRARY_NAME="{name}"
-LIBRARY_VERSION="{version}"
-""".format(**c['metadata']))
-print("""
-PY3_DEPS={py3deps}
-PY2_DEPS={py2deps}
-SETUP_CMDS={commands}
-CONFIG_TXT={configtxt}
-""".format(**p))
-EOF`
-
 if [ $? -ne 0 ]; then
 	printf "Error parsing configuration...\n"
 	exit 1
@@ -60,6 +36,32 @@ function apt_pkg_install {
 		sudo apt install -y $PACKAGES
 	fi
 }
+
+apt_pkg_install python-configparser
+
+CONFIG_VARS=`python - <<EOF
+from configparser import ConfigParser
+c = ConfigParser()
+c.read('library/setup.cfg')
+p = dict(c['pimoroni'])
+# Convert multi-line config entries into bash arrays
+for k in p.keys():
+    fmt = '"{}"'
+    if '\n' in p[k]:
+        p[k] = "'\n\t'".join(p[k].split('\n')[1:])
+        fmt = "('{}')"
+    p[k] = fmt.format(p[k])
+print("""
+LIBRARY_NAME="{name}"
+LIBRARY_VERSION="{version}"
+""".format(**c['metadata']))
+print("""
+PY3_DEPS={py3deps}
+PY2_DEPS={py2deps}
+SETUP_CMDS={commands}
+CONFIG_TXT={configtxt}
+""".format(**p))
+EOF`
 
 eval $CONFIG_VARS
 
