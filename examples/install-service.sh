@@ -3,6 +3,8 @@ THRESHOLD=55
 HYSTERESIS=5
 DELAY=2
 PREEMPT="no"
+NOLED="no"
+NOBUTTON="no"
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
 while [[ $# -gt 0 ]]; do

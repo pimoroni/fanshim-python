@@ -97,19 +97,36 @@ if not args.nobutton:
 
 signal.signal(signal.SIGTERM, clean_exit)
 
+update_led(fanshim.get_fan())
+enable = False
+is_fast = False
+last_change = 0
+
 try:
-    update_led(fanshim.get_fan())
     while True:
         t = get_cpu_temp()
         f = get_cpu_freq()
+        was_fast = is_fast
+        is_fast = (int(f.current) == int(f.max))
         if args.verbose:
             print("Current: {:05.02f} Target: {:05.02f} Freq {: 5.02f} Automatic: {} On: {}".format(t, args.threshold, f.current / 1000.0, armed, enabled))
-        if abs(last_change - t) > args.hysteresis and armed:
-            enable = (t >= args.threshold)
-            if args.preempt:
-                enable = enable or (int(f.current) == int(f.max))
-            if set_fan(enable):
-                last_change = t
+
+        if args.preempt and is_fast and was_fast:
+            enable = True
+        elif armed and abs(last_change - t) > args.hysteresis:
+            if t >= args.threshold:
+                enable = True
+            elif t < args.threshold:
+                enable = False
+
+        if set_fan(enable):
+            last_change = t
+        #if abs(last_change - t) > args.hysteresis and armed:
+        #    enable = (t >= args.threshold)
+        #    if args.preempt:
+        #        enable = enable or (int(f.current) == int(f.max))
+        #    if set_fan(enable):
+        #        last_change = t
         time.sleep(args.delay)
 except KeyboardInterrupt:
     pass
