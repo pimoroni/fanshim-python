@@ -3,6 +3,7 @@ THRESHOLD=55
 HYSTERESIS=5
 DELAY=2
 PREEMPT="no"
+POSITIONAL_ARGS=()
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
 while [[ $# -gt 0 ]]; do
@@ -51,9 +52,12 @@ while [[ $# -gt 0 ]]; do
 		shift
 		;;
 	*)
+		POSITIONAL_ARGS+=("$1")
 		shift
 	esac
 done
+
+set -- "${POSITIONAL_ARGS[@]}"
 
 EXTRA_ARGS=""
 
@@ -67,6 +71,14 @@ fi
 
 if [ "$NOBUTTON" == "yes" ]; then
 	EXTRA_ARGS+=' --nobutton'
+fi
+
+if ! [ "$1" == "" ]; then
+	THRESHOLD=$1
+fi
+
+if ! [ "$2" == "" ]; then
+	HYSTERESIS=$2
 fi
 
 
