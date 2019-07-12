@@ -8,8 +8,11 @@ import sys
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--hysteresis', type=float, default=5.0, help='Distance from threshold before fan is disabled')
+parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
+parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
+
+parser.add_argument('--off-threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
+parser.add_argument('--on-threshold', type=float, default=65.0, help='Temperature threshold in degrees C to disable fan')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
@@ -58,6 +61,14 @@ def set_automatic(status):
     global armed, last_change
     armed = status
     last_change = 0
+
+
+if args.threshold > -1 or args.hysteresis > -1:
+    print("""
+The --threshold and --hysteresis parameters have been deprecated.
+Use --on-threshold and --off-threshold instead!
+""")
+    sys.exit(1)
 
 
 fanshim = FanShim()
@@ -113,20 +124,15 @@ try:
 
         if args.preempt and is_fast and was_fast:
             enable = True
-        elif armed and abs(last_change - t) > args.hysteresis:
-            if t >= args.threshold:
+        elif armed:
+            if t >= args.on_threshold:
                 enable = True
-            elif t < args.threshold:
+            elif t <= args.off_threshold:
                 enable = False
 
         if set_fan(enable):
             last_change = t
-        #if abs(last_change - t) > args.hysteresis and armed:
-        #    enable = (t >= args.threshold)
-        #    if args.preempt:
-        #        enable = enable or (int(f.current) == int(f.max))
-        #    if set_fan(enable):
-        #        last_change = t
+
         time.sleep(args.delay)
 except KeyboardInterrupt:
     pass
