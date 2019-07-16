@@ -24,7 +24,8 @@ args = parser.parse_args()
 
 def clean_exit(signum, frame):
     set_fan(False)
-    fanshim.set_light(0, 0, 0)
+    if not args.noled:
+        fanshim.set_light(0, 0, 0)
     sys.exit(0)
 
 

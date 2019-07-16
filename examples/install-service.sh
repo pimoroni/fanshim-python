@@ -121,7 +121,7 @@ No LED: $NOLED
 No Button: $NOBUTTON
 
 To change these options, run:
-sudo ./install-service --off-threshold <n> --on-threshold <n> --delay <n> (--preempt) (--noled) (--nobutton)
+sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> (--preempt) (--noled) (--nobutton)
 
 Or edit: $SERVICE_PATH
 
