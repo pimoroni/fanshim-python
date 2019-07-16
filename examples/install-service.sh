@@ -1,9 +1,16 @@
 #!/bin/bash
-THRESHOLD=55
+ON_THRESHOLD=65
+OFF_THRESHOLD=55
 HYSTERESIS=5
 DELAY=2
 PREEMPT="no"
 POSITIONAL_ARGS=()
+NOLED="no"
+NOBUTTON="no"
+
+OLD_THRESHOLD=""
+OLD_HYSTERESIS=""
+
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
 if ! [ -f "/usr/bin/python3" ]; then
@@ -42,13 +49,23 @@ while [[ $# -gt 0 ]]; do
 		fi
 		shift
 		;;
+        --on-threshold)
+		ON_THRESHOLD="$2"
+		shift
+		shift
+		;;
+	--off-threshold)
+		OFF_THRESHOLD="$2"
+		shift
+		shift
+		;;
 	-t|--threshold)
-		THRESHOLD="$2"
+		OLD_THRESHOLD="error"
 		shift
 		shift
 		;;
 	-h|--hysteresis)
-		HYSTERESIS="$2"
+		OLD_HYSTERESIS="error"
 		shift
 		shift
 		;;
@@ -66,6 +83,12 @@ done
 set -- "${POSITIONAL_ARGS[@]}"
 
 EXTRA_ARGS=""
+
+if [ "$OLD_THRESHOLD" == "error" ] || [ "$OLD_HYSTERESIS" == "error" ]; then
+	printf "The --threshold and --hysteresis parameters are deprecated.\n"
+	printf "Use --off-threshold and --on-threshold instead.\n"
+	exit 1
+fi
 
 if [ "$PREEMPT" == "yes" ]; then
 	EXTRA_ARGS+=' --preempt'
@@ -90,15 +113,15 @@ fi
 
 cat << EOF
 Setting up with:
-Threshold: $THRESHOLD C
-Hysteresis: $HYSTERESIS C
+Off Threshold: $OFF_THRESHOLD C
+On Threshold: $ON_THRESHOLD C
 Delay: $DELAY seconds
 Preempt: $PREEMPT
 No LED: $NOLED
 No Button: $NOBUTTON
 
 To change these options, run:
-sudo ./install-service --threshold <n> --hysteresis <n> --delay <n> (--preempt) (--noled) (--nobutton)
+sudo ./install-service --off-threshold <n> --on-threshold <n> --delay <n> (--preempt) (--noled) (--nobutton)
 
 Or edit: $SERVICE_PATH
 
@@ -113,7 +136,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/automatic.py --threshold $THRESHOLD --hysteresis $HYSTERESIS --delay $DELAY $EXTRA_ARGS
+ExecStart=$(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
