@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 from fanshim import FanShim
+from threading import Lock
+import colorsys
 import psutil
 import argparse
 import time
 import signal
 import sys
+
+
+T_MIN = 35
+T_MAX = 95
 
 
 parser = argparse.ArgumentParser()
@@ -27,6 +33,20 @@ def clean_exit(signum, frame):
     if not args.noled:
         fanshim.set_light(0, 0, 0)
     sys.exit(0)
+
+
+def update_led_temperature(temp):
+    led_busy.acquire()
+    temp = float(temp)
+    temp -= args.off_threshold
+    temp /= float(args.on_threshold - args.off_threshold)
+    temp = max(0, min(1, temp))
+    temp = 1.0 - temp
+    temp *= 120.0
+    temp /= 360.0
+    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, 1.0)]
+    fanshim.set_light(r, g, b)
+    led_busy.release()
 
 
 def update_led(state):
@@ -57,7 +77,7 @@ def set_fan(status):
     changed = False
     if status != enabled:
         changed = True
-        update_led(status)
+        # update_led(status)
         fanshim.set_fan(status)
     enabled = status
     return changed
@@ -82,7 +102,12 @@ fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
 armed = True
 enabled = False
+led_busy = Lock()
+enable = False
+is_fast = False
 last_change = 0
+signal.signal(signal.SIGTERM, clean_exit)
+
 
 t = get_cpu_temp()
 if t >= args.threshold:
@@ -99,25 +124,19 @@ if not args.nobutton:
         elif not armed:
             set_fan(not enabled)
 
-
     @fanshim.on_hold()
     def held_handler():
+        global led_busy
         if args.noled:
-             return
+            return
+        led_busy.acquire()
         for _ in range(3):
             fanshim.set_light(0, 0, 255)
             time.sleep(0.04)
             fanshim.set_light(0, 0, 0)
             time.sleep(0.04)
-            update_led(enabled)
+        led_busy.release()
 
-
-signal.signal(signal.SIGTERM, clean_exit)
-
-update_led(fanshim.get_fan())
-enable = False
-is_fast = False
-last_change = 0
 
 try:
     while True:
@@ -126,7 +145,7 @@ try:
         was_fast = is_fast
         is_fast = (int(f.current) == int(f.max))
         if args.verbose:
-            print("Current: {:05.02f} Target: {:05.02f} Freq {: 5.02f} Automatic: {} On: {}".format(t, args.threshold, f.current / 1000.0, armed, enabled))
+            print("Current: {:05.02f} Target: {:05.02f} Freq {: 5.02f} Automatic: {} On: {}".format(t, args.off_threshold, f.current / 1000.0, armed, enabled))
 
         if args.preempt and is_fast and was_fast:
             enable = True
@@ -138,6 +157,9 @@ try:
 
         if set_fan(enable):
             last_change = t
+
+        if not args.noled:
+            update_led_temperature(t)
 
         time.sleep(args.delay)
 except KeyboardInterrupt:
