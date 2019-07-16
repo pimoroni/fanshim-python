@@ -46,6 +46,12 @@ You can also toggle the fan with:
 fanshim.toggle_fan()
 ```
 
+You can check the status of the fan with:
+
+```python
+fanshim.get_fan() # returns 1 for 'on', 0 for 'off'
+```
+
 ## LED
 
 Fan Shim includes one RGB APA-102 LED.
