@@ -103,8 +103,8 @@ if not args.nobutton:
 signal.signal(signal.SIGTERM, clean_exit)
 
 try:
-    update_led(fanshim.get_fan())
     while True:
+        update_led(fanshim.get_fan())
         t = get_cpu_temp()
         f = get_cpu_freq()
         if args.verbose:

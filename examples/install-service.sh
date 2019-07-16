@@ -6,6 +6,12 @@ PREEMPT="no"
 POSITIONAL_ARGS=()
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
+if ! [ -f "/usr/bin/python3" ]; then
+	printf "Fan SHIM controller requires Python 3\n"
+	printf "You should run: 'sudo apt install python3'\n"
+	exit 1
+fi
+
 while [[ $# -gt 0 ]]; do
 	K="$1"
 	case $K in
@@ -114,10 +120,27 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
+printf "Checking for rpi.gpio>=0.7.0a2 (for Pi 4 support)\n"
+python3 - <<EOF
+import RPi.GPIO as GPIO
+from pkg_resources import parse_version
+import sys
+if parse_version(GPIO.VERSION) < parse_version('0.7.0a2'):
+    sys.exit(1)
+EOF
+
+if [ $? -ne 0 ]; then
+	printf "Installing rpi.gpio\n"
+	pip3 install --upgrade --pre rpi.gpio
+else
+	printf "rpi.gpio >= 0.7.0a2 already installed\n"
+fi
+
 printf "Checking for psutil\n"
 python3 - <<EOF
 import psutil
 EOF
+
 if [ $? -ne 0 ]; then
 	printf "Installing psutil\n"
 	pip3 install psutil fanshim
