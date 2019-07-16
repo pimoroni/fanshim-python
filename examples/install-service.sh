@@ -122,6 +122,7 @@ No Button: $NOBUTTON
 
 To change these options, run:
 sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> (--preempt) (--noled) (--nobutton)
+>>>>>>> steve-patch-1
 
 Or edit: $SERVICE_PATH
 
