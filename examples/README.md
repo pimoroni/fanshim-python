@@ -25,6 +25,7 @@ The script supports these arguments:
 * `--off-threshold N` the temperature at which to turn the fan off, in degrees C (default 55)
 * `--delay N` the delay between subsequent temperature readings, in seconds (default 2)
 * `--preempt` preemptively kick in the fan when the CPU frequency is raised (default off)
+* `--brightness` the brightness (value of HSV) of the LED (0-255, default 255)
 
 Deprecated arguments
 
