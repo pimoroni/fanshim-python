@@ -20,6 +20,7 @@ parser.add_argument('--preempt', action='store_true', default=False, help='Monit
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
 parser.add_argument('--nobutton', action='store_true', default=False, help='Disable button input')
 parser.add_argument('--noled', action='store_true', default=False, help='Disable LED control')
+parser.add_argument('--brightness', type=float, default=255.0, help='LED brightness, from 0 to 255')
 
 args = parser.parse_args()
 
@@ -40,7 +41,7 @@ def update_led_temperature(temp):
     temp = 1.0 - temp
     temp *= 120.0
     temp /= 360.0
-    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, 1.0)]
+    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, args.brightness / 255.0)]
     fanshim.set_light(r, g, b)
     led_busy.release()
 
