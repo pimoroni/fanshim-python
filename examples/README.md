@@ -17,7 +17,7 @@ Complete example for monitoring temperature and automatic fan control.
 * A long press on the button will toggle automatic mode off/on
 * A short press - when automatic is off - will toggle the fan
 
-The LED should light up Green when the fan is enabled, and Red when it's not.
+The LED will fade between green (cool) to red (hot) as the Pi's temperature changes.
 
 The script supports these arguments:
 

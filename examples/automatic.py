@@ -9,10 +9,6 @@ import signal
 import sys
 
 
-T_MIN = 35
-T_MAX = 95
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
@@ -49,15 +45,6 @@ def update_led_temperature(temp):
     led_busy.release()
 
 
-def update_led(state):
-    if args.noled:
-        return
-    if state:
-        fanshim.set_light(0, 255, 0)
-    else:
-        fanshim.set_light(255, 0, 0)
-
-
 def get_cpu_temp():
     t = psutil.sensors_temperatures()
     for x in ['cpu-thermal', 'cpu_thermal']:
@@ -77,7 +64,6 @@ def set_fan(status):
     changed = False
     if status != enabled:
         changed = True
-        # update_led(status)
         fanshim.set_fan(status)
     enabled = status
     return changed
