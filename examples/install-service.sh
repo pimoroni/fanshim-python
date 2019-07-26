@@ -20,8 +20,8 @@ if ! [ -f "/usr/bin/python3" ]; then
 fi
 
 if ! [ -f "/usr/bin/python3-pip" ]; then
-	printf "Fan SHIM controller requires Python 3\n"
-	printf "You should run: 'sudo apt install python3'\n"
+	printf "Fan SHIM controller requires Python 3 pip\n"
+	printf "You should run: 'sudo apt install python3-pip'\n"
 	exit 1
 fi
 
