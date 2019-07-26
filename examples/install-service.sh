@@ -19,7 +19,7 @@ if ! [ -f "/usr/bin/python3" ]; then
 	exit 1
 fi
 
-if ! [ -f "/usr/bin/python3-pip" ]; then
+if ! [ -f "/usr/bin/pip3" ]; then
 	printf "Fan SHIM controller requires Python 3 pip\n"
 	printf "You should run: 'sudo apt install python3-pip'\n"
 	exit 1
