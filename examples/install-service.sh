@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
 	K="$1"
 	case $K in
 	-p|--preempt)
-		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
+		if [ "$2" == "yes" ] || [ "$2" == "no" ]; then
 			PREEMPT="$2"
 			shift
 		else
@@ -32,7 +32,7 @@ while [[ $# -gt 0 ]]; do
 		shift
 		;;
 	-l|--noled)
-		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
+		if [ "$2" == "yes" ] || [ "$2" == "no" ]; then
 			NOLED="$2"
 			shift
 		else
@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 		shift
 		;;
 	-b|--nobutton)
-		if [ "$2" == "yes" ] || [ "$2" == "no"]; then
+		if [ "$2" == "yes" ] || [ "$2" == "no" ]; then
 			NOBUTTON="$2"
 			shift
 		else
@@ -103,11 +103,11 @@ if [ "$NOBUTTON" == "yes" ]; then
 fi
 
 if ! [ "$1" == "" ]; then
-	THRESHOLD=$1
+	ON_THRESHOLD=$1
 fi
 
 if ! [ "$2" == "" ]; then
-	HYSTERESIS=$2
+	(( OFF_THRESHOLD = ON_THRESHOLD - $2 ))
 fi
 
 
