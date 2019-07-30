@@ -75,11 +75,47 @@ fi
 cd library
 
 printf "Installing for Python 2..\n"
+
+printf "Checking for rpi.gpio>=0.7.0 (for Pi 4 support)\n"
+python - <<EOF
+import RPi.GPIO as GPIO
+from pkg_resources import parse_version
+import sys
+if parse_version(GPIO.VERSION) < parse_version('0.7.0'):
+    sys.exit(1)
+EOF
+
+if [ $? -ne 0 ]; then
+	printf "Installing rpi.gpio\n"
+	pip install --upgrade "rpi.gpio>=0.7.0"
+else
+	printf "rpi.gpio >= 0.7.0 already installed\n"
+fi
+
 apt_pkg_install "${PY2_DEPS[@]}"
 python setup.py install
 
+
+
 if [ -f "/usr/bin/python3" ]; then
 	printf "Installing for Python 3..\n"
+
+	printf "Checking for rpi.gpio>=0.7.0 (for Pi 4 support)\n"
+	python3 - <<EOF
+import RPi.GPIO as GPIO
+from pkg_resources import parse_version
+import sys
+if parse_version(GPIO.VERSION) < parse_version('0.7.0'):
+    sys.exit(1)
+EOF
+
+	if [ $? -ne 0 ]; then
+		printf "Installing rpi.gpio\n"
+		pip3 install --upgrade "rpi.gpio>=0.7.0"
+	else
+		printf "rpi.gpio >= 0.7.0 already installed\n"
+	fi
+
 	apt_pkg_install "${PY3_DEPS[@]}"
 	python3 setup.py install
 fi
