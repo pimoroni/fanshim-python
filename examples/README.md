@@ -17,7 +17,7 @@ Complete example for monitoring temperature and automatic fan control.
 * A long press on the button will toggle automatic mode off/on
 * A short press - when automatic is off - will toggle the fan
 
-The LED should light up Green when the fan is enabled, and Red when it's not.
+The LED will fade between green (cool) to red (hot) as the Pi's temperature changes.
 
 The script supports these arguments:
 
@@ -25,6 +25,7 @@ The script supports these arguments:
 * `--off-threshold N` the temperature at which to turn the fan off, in degrees C (default 55)
 * `--delay N` the delay between subsequent temperature readings, in seconds (default 2)
 * `--preempt` preemptively kick in the fan when the CPU frequency is raised (default off)
+* `--brightness` the brightness (value of HSV) of the LED (0-255, default 255)
 
 Deprecated arguments
 
