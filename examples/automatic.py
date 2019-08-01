@@ -9,10 +9,6 @@ import signal
 import sys
 
 
-T_MIN = 35
-T_MAX = 95
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
@@ -24,6 +20,7 @@ parser.add_argument('--preempt', action='store_true', default=False, help='Monit
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
 parser.add_argument('--nobutton', action='store_true', default=False, help='Disable button input')
 parser.add_argument('--noled', action='store_true', default=False, help='Disable LED control')
+parser.add_argument('--brightness', type=float, default=255.0, help='LED brightness, from 0 to 255')
 
 args = parser.parse_args()
 
@@ -44,18 +41,9 @@ def update_led_temperature(temp):
     temp = 1.0 - temp
     temp *= 120.0
     temp /= 360.0
-    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, 1.0)]
+    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, args.brightness / 255.0)]
     fanshim.set_light(r, g, b)
     led_busy.release()
-
-
-def update_led(state):
-    if args.noled:
-        return
-    if state:
-        fanshim.set_light(0, 255, 0)
-    else:
-        fanshim.set_light(255, 0, 0)
 
 
 def get_cpu_temp():
@@ -77,7 +65,6 @@ def set_fan(status):
     changed = False
     if status != enabled:
         changed = True
-        # update_led(status)
         fanshim.set_fan(status)
     enabled = status
     return changed

@@ -7,6 +7,7 @@ PREEMPT="no"
 POSITIONAL_ARGS=()
 NOLED="no"
 NOBUTTON="no"
+BRIGHTNESS=255
 
 OLD_THRESHOLD=""
 OLD_HYSTERESIS=""
@@ -80,6 +81,11 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
+	--brightness)
+		BRIGHTNESS="$2"
+		shift
+		shift
+		;;
 	*)
 		POSITIONAL_ARGS+=("$1")
 		shift
@@ -125,9 +131,10 @@ Delay: $DELAY seconds
 Preempt: $PREEMPT
 No LED: $NOLED
 No Button: $NOBUTTON
+Brightness: $BRIGHTNESS
 
 To change these options, run:
-sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> (--preempt) (--noled) (--nobutton)
+sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> (--preempt) (--noled) (--nobutton)
 
 Or edit: $SERVICE_PATH
 
@@ -142,7 +149,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY $EXTRA_ARGS
+ExecStart=$(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY --brightness $BRIGHTNESS $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
