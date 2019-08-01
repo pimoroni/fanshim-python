@@ -125,13 +125,13 @@ fi
 
 cat << EOF
 Setting up with:
-Off Threshold: $OFF_THRESHOLD C
-On Threshold: $ON_THRESHOLD C
-Delay: $DELAY seconds
-Preempt: $PREEMPT
-No LED: $NOLED
-No Button: $NOBUTTON
-Brightness: $BRIGHTNESS
+Off Threshold:  $OFF_THRESHOLD C
+On Threshold:   $ON_THRESHOLD C
+Delay:          $DELAY seconds
+Preempt:        $PREEMPT
+Disable LED:    $NOLED
+Disable Button: $NOBUTTON
+Brightness:     $BRIGHTNESS
 
 To change these options, run:
 sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> (--preempt) (--noled) (--nobutton)
