@@ -172,8 +172,20 @@ else
 	printf "rpi.gpio >= 0.7.0 already installed\n"
 fi
 
+printf "Checking for Fan SHIM\n"
+python3 - > /dev/null 2>&1 <<EOF
+import fanshim
+EOF
+
+if [ $? -ne 0 ]; then
+	printf "Installing Fan SHIM\n"
+	pip3 install fanshim
+else
+	printf "Fan SHIM already installed\n"
+fi
+
 printf "Checking for psutil\n"
-python3 - <<EOF
+python3 - > /dev/null 2>&1 <<EOF
 import psutil
 EOF
 
