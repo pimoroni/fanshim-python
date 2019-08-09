@@ -14,13 +14,13 @@ OLD_HYSTERESIS=""
 
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
-if ! [ -f "/usr/bin/python3" ]; then
+if ! ( type -P python3 > /dev/null ) ; then
 	printf "Fan SHIM controller requires Python 3\n"
 	printf "You should run: 'sudo apt install python3'\n"
 	exit 1
 fi
 
-if ! [ -f "/usr/bin/pip3" ]; then
+if ! ( type -P pip3 > /dev/null ) ; then
 	printf "Fan SHIM controller requires Python 3 pip\n"
 	printf "You should run: 'sudo apt install python3-pip'\n"
 	exit 1
