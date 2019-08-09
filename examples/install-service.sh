@@ -56,12 +56,12 @@ while [[ $# -gt 0 ]]; do
 		fi
 		shift
 		;;
-        --on-threshold)
+	-o|--on-threshold)
 		ON_THRESHOLD="$2"
 		shift
 		shift
 		;;
-	--off-threshold)
+	-f|--off-threshold)
 		OFF_THRESHOLD="$2"
 		shift
 		shift
@@ -81,7 +81,7 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
-	--brightness)
+	-b|--brightness)
 		BRIGHTNESS="$2"
 		shift
 		shift
