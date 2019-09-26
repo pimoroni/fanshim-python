@@ -71,7 +71,7 @@ def set_fan(status):
 
 
 def set_automatic(status):
-    global armed, 
+    global armed
     armed = status
     
 
@@ -138,9 +138,6 @@ try:
                set_fan(True)
             elif t <= args.off_threshold:
                set_fan(False)
-
-        
-            
 
         if not args.noled:
             update_led_temperature(t)
