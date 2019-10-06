@@ -104,7 +104,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if ! ( type -P $PYTHON > /dev/null ) ; then
-	if [ $VENV_SET ]; then
+	if [ "$VENV_SET" == "true" ]; then
 		printf "Cannot find virtual environment.\n"
 		printf "Set to base of virtual environment i.e. <venv>/bin/python3.\n"
 	else
@@ -116,7 +116,7 @@ fi
 
 if ! ( type -P $PIP > /dev/null ) ; then
 	printf "Fan SHIM controller requires Python 3 pip\n"
-	if [ $VENV_SET ]; then
+	if [ "$VENV_SET" == "true" ]; then
 		printf "Ensure that your virtual environment has pip3 installed.\n"
 	else
 		printf "You should run: 'sudo apt install python3-pip'\n"
