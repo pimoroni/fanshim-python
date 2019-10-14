@@ -13,7 +13,6 @@ PIP="pip3"
 
 ON_THRESHOLD_SET=false
 OFF_THRESHOLD_SET=false
-VENV_SET=false
 
 OLD_THRESHOLD=""
 OLD_HYSTERESIS=""
@@ -86,7 +85,6 @@ while [[ $# -gt 0 ]]; do
 		;;
 	--venv)
 		VENV="$(realpath ${2%/})/bin"
-		VENV_SET=true
 		PYTHON="$VENV/python3"
 		PIP="$VENV/pip3"
 		shift
@@ -103,23 +101,23 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-if ! ( type -P $PYTHON > /dev/null ) ; then
-	if [ "$VENV_SET" == "true" ]; then
-		printf "Cannot find virtual environment.\n"
-		printf "Set to base of virtual environment i.e. <venv>/bin/python3.\n"
-	else
+if ! ( type -P "$PYTHON" > /dev/null ) ; then
+	if [ "$PYTHON" == "python3" ]; then
 		printf "Fan SHIM controller requires Python 3\n"
 		printf "You should run: 'sudo apt install python3'\n"
+	else
+		printf "Cannot find virtual environment.\n"
+		printf "Set to base of virtual environment i.e. <venv>/bin/python3.\n"
 	fi
 	exit 1
 fi
 
-if ! ( type -P $PIP > /dev/null ) ; then
+if ! ( type -P "$PIP" > /dev/null ) ; then
 	printf "Fan SHIM controller requires Python 3 pip\n"
-	if [ "$VENV_SET" == "true" ]; then
-		printf "Ensure that your virtual environment has pip3 installed.\n"
-	else
+	if [ "$PIP" == "pip3" ]; then
 		printf "You should run: 'sudo apt install python3-pip'\n"
+	else
+		printf "Ensure that your virtual environment has pip3 installed.\n"
 	fi
 	exit 1
 fi
