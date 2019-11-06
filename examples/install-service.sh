@@ -9,10 +9,15 @@ NOLED="no"
 NOBUTTON="no"
 BRIGHTNESS=255
 
+ON_THRESHOLD_SET=false
+OFF_THRESHOLD_SET=false
+
 OLD_THRESHOLD=""
 OLD_HYSTERESIS=""
 
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
+
+USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> (--preempt) (--noled) (--nobutton)"
 
 if ! ( type -P python3 > /dev/null ) ; then
 	printf "Fan SHIM controller requires Python 3\n"
@@ -58,11 +63,13 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-o|--on-threshold)
 		ON_THRESHOLD="$2"
+		ON_THRESHOLD_SET=true
 		shift
 		shift
 		;;
 	-f|--off-threshold)
 		OFF_THRESHOLD="$2"
+		OFF_THRESHOLD_SET=true
 		shift
 		shift
 		;;
@@ -81,12 +88,17 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
-	-b|--brightness)
+	-r|--brightness)
 		BRIGHTNESS="$2"
 		shift
 		shift
 		;;
 	*)
+		if [[ $1 == -* ]]; then
+			printf "Unrecognised option: $1\n";
+			printf "Usage: $USAGE\n";
+			exit 1
+		fi
 		POSITIONAL_ARGS+=("$1")
 		shift
 	esac
@@ -115,10 +127,20 @@ if [ "$NOBUTTON" == "yes" ]; then
 fi
 
 if ! [ "$1" == "" ]; then
+	if [ $ON_THRESHOLD_SET ]; then
+		printf "Refusing to overwrite explicitly set On Threshold ($ON_THRESHOLD) with positional argument!\n"
+		printf "Please double-check your arguments and use one or the other!\n"
+		exit 1
+	fi
 	ON_THRESHOLD=$1
 fi
 
 if ! [ "$2" == "" ]; then
+	if [ $OFF_THRESHOLD_SET ]; then
+		printf "Refusing to overwrite explicitly set Off Threshold ($OFF_THRESHOLD) with positional argument!\n"
+		printf "Please double-check your arguments and use one or the other!\n"
+		exit 1
+	fi
 	(( OFF_THRESHOLD = ON_THRESHOLD - $2 ))
 fi
 
@@ -134,7 +156,7 @@ Disable Button: $NOBUTTON
 Brightness:     $BRIGHTNESS
 
 To change these options, run:
-sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> (--preempt) (--noled) (--nobutton)
+$USAGE
 
 Or edit: $SERVICE_PATH
 
