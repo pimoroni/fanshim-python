@@ -1,4 +1,6 @@
 #!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ON_THRESHOLD=65
 OFF_THRESHOLD=55
 HYSTERESIS=5
@@ -170,8 +172,8 @@ After=multi-user.target
 
 [Service]
 Type=simple
-WorkingDirectory=$(pwd)
-ExecStart=$(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY --brightness $BRIGHTNESS $EXTRA_ARGS
+WorkingDirectory=$DIR
+ExecStart=$DIR/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY --brightness $BRIGHTNESS $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
