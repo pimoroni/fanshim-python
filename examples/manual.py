@@ -32,6 +32,7 @@ def handle_command(data):
             print("Fan SHIM: Invalid colour {c}".format(c=data))
             return
         print("Fan SHIM: Setting LED to RGB: {r}, {g}, {b}".format(r=r, g=g, b=b))
+        fanshim.set_light(r, g, b)
 
 
 print("""manual.py - Fan SHIM manual control
