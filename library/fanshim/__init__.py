@@ -1,6 +1,9 @@
 import RPi.GPIO as GPIO
 import time
-import plasma
+try:
+    from plasma import legacy as plasma
+except ImportError:
+    import plasma
 import atexit
 from threading import Thread
 
