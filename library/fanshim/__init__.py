@@ -7,7 +7,7 @@ except ImportError:
 import atexit
 from threading import Thread
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 
 class FanShim():
