@@ -41,9 +41,9 @@ python-readme: library/README.rst
 python-license: library/LICENSE.txt
 
 library/README.rst: README.md library/CHANGELOG.txt
-	pandoc --from=markdown --to=rst -o library/README.rst README.md
-	echo "" >> library/README.rst
-	cat library/CHANGELOG.txt >> library/README.rst
+	cp README.md library/README.md
+	echo "" >> library/README.md
+	cat library/CHANGELOG.txt >> library/README.md
 
 library/LICENSE.txt: LICENSE
 	cp LICENSE library/LICENSE.txt

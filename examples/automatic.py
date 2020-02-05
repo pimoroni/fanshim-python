@@ -95,6 +95,10 @@ is_fast = False
 last_change = 0
 signal.signal(signal.SIGTERM, clean_exit)
 
+if args.noled:
+    led_busy.acquire()
+    fanshim.set_light(0, 0, 0)
+    led_busy.release()
 
 t = get_cpu_temp()
 if t >= args.threshold:

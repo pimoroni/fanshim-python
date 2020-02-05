@@ -137,3 +137,23 @@ fanshim.start_polling()
 * Fan SHIM in C, using WiringPi - https://github.com/flobernd/raspi-fanshim
 * Fan SHIM in C++, using libgpiod - https://github.com/daviehh/fanshim-cpp
 
+
+0.0.4
+-----
+
+* Prepare Fan SHIM to use legacy Plasma API
+
+0.0.3
+-----
+
+* Fix: lower polling frequency and make customisable, for PR #6
+
+0.0.2
+-----
+
+* Fix: Fix error on exit
+
+0.0.1
+-----
+
+* Initial Release

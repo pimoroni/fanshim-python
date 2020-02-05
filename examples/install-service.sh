@@ -1,4 +1,6 @@
 #!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ON_THRESHOLD=65
 OFF_THRESHOLD=55
 HYSTERESIS=5
