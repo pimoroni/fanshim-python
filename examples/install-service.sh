@@ -23,6 +23,9 @@ SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
 USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> --venv <python_virtual_environment> (--preempt) (--noled) (--nobutton)"
 
+# Convert Python path to absolute for systemd
+PYTHON=`type -P $PYTHON`
+
 while [[ $# -gt 0 ]]; do
 	K="$1"
 	case $K in
