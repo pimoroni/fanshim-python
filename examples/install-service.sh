@@ -12,6 +12,7 @@ NOBUTTON="no"
 BRIGHTNESS=255
 PYTHON="python3"
 PIP="pip3"
+PSUTIL_MIN_VERSION="5.6.7"
 
 ON_THRESHOLD_SET=false
 OFF_THRESHOLD_SET=false
@@ -201,7 +202,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-printf "Checking for rpi.gpio>=0.7.0 (for Pi 4 support)\n"
+printf "Checking for rpi.gpio >= 0.7.0 (for Pi 4 support)\n"
 $PYTHON - <<EOF
 import RPi.GPIO as GPIO
 from pkg_resources import parse_version
@@ -229,16 +230,19 @@ else
 	printf "Fan SHIM already installed\n"
 fi
 
-printf "Checking for psutil\n"
+printf "Checking for psutil >= $PSUTIL_MIN_VERSION\n"
 $PYTHON - > /dev/null 2>&1 <<EOF
+import sys
 import psutil
+from pkg_resources import parse_version
+sys.exit(not parse_version(psutil.__version__) >= parse_version('$PSUTIL_MIN_VERSION'))
 EOF
 
 if [ $? -ne 0 ]; then
 	printf "Installing psutil\n"
-	$PIP install psutil fanshim
+	$PIP install --ignore-installed psutil
 else
-	printf "psutil already installed\n"
+	printf "psutil >= $PSUTIL_MIN_VERSION already installed\n"
 fi
 
 printf "\nInstalling service to: $SERVICE_PATH\n"
