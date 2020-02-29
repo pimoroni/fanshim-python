@@ -10,6 +10,12 @@ Demonstrates usage of button press, release and hold handlers.
 
 Demonstrates toggling the fan on and off with the button.
 
+# manual.py
+
+A barebones demonstration of how to control Fan SHIM manually.
+
+Since a Python script writing a GPIO pin and exiting can have unpredictable effects, this example shows how you might craft a "service" that runs continuously and ensures the Fan's GPIO pin is asserted either on/off, and that the LED is continuously driven.
+
 # automatic.py
 
 Complete example for monitoring temperature and automatic fan control.

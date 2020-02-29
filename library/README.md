@@ -132,6 +132,16 @@ You can start it again with:
 fanshim.start_polling()
 ```
 
+# Alternate Software
+
+* Fan SHIM in C, using WiringPi - https://github.com/flobernd/raspi-fanshim
+* Fan SHIM in C++, using libgpiod - https://github.com/daviehh/fanshim-cpp
+
+
+0.0.4
+-----
+
+* Prepare Fan SHIM to use legacy Plasma API
 
 0.0.3
 -----
