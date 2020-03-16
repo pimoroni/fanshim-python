@@ -13,6 +13,7 @@ Stable library from PyPi:
 
 Latest/development library from GitHub:
 
+* `apt install git python3-pip`
 * `git clone https://github.com/pimoroni/fanshim-python`
 * `cd fanshim-python`
 * `sudo ./install.sh`
