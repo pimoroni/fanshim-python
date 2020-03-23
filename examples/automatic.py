@@ -13,8 +13,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
 
-parser.add_argument('--off-threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--on-threshold', type=float, default=65.0, help='Temperature threshold in degrees C to disable fan')
+parser.add_argument('--off-threshold', type=float, default=55.0, help='Temperature threshold in degrees C to disable fan')
+parser.add_argument('--on-threshold', type=float, default=65.0, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
@@ -71,9 +71,9 @@ def set_fan(status):
 
 
 def set_automatic(status):
-    global armed, last_change
+    global armed
     armed = status
-    last_change = 0
+    
 
 
 if args.threshold > -1 or args.hysteresis > -1:
@@ -92,19 +92,12 @@ enabled = False
 led_busy = Lock()
 enable = False
 is_fast = False
-last_change = 0
 signal.signal(signal.SIGTERM, clean_exit)
 
 if args.noled:
     led_busy.acquire()
     fanshim.set_light(0, 0, 0)
     led_busy.release()
-
-t = get_cpu_temp()
-if t >= args.threshold:
-    last_change = get_cpu_temp()
-    set_fan(True)
-
 
 if not args.nobutton:
     @fanshim.on_release()
@@ -142,12 +135,9 @@ try:
             enable = True
         elif armed:
             if t >= args.on_threshold:
-                enable = True
+               set_fan(True)
             elif t <= args.off_threshold:
-                enable = False
-
-        if set_fan(enable):
-            last_change = t
+               set_fan(False)
 
         if not args.noled:
             update_led_temperature(t)
