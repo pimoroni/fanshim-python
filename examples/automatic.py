@@ -146,8 +146,8 @@ try:
             elif t <= args.off_threshold:
                 enable = False
 
-            if set_fan(enable):
-                last_change = t
+        if set_fan(enable):
+            last_change = t
 
         if not args.noled:
             update_led_temperature(t)
