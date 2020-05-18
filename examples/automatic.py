@@ -10,11 +10,10 @@ import sys
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
-
 parser.add_argument('--off-threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--on-threshold', type=float, default=65.0, help='Temperature threshold in degrees C to disable fan')
+parser.add_argument('--low-temp', type=float, default=None, help='Temperature at which the LED is greeen')
+parser.add_argument('--high-temp', type=float, default=None, help='Temperature for which LED is red')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
@@ -35,8 +34,8 @@ def clean_exit(signum, frame):
 def update_led_temperature(temp):
     led_busy.acquire()
     temp = float(temp)
-    temp -= args.off_threshold
-    temp /= float(args.on_threshold - args.off_threshold)
+    temp -= args.low_temp
+    temp /= float(args.high_temp - args.low_temp)
     temp = max(0, min(1, temp))
     temp = 1.0 - temp
     temp *= 120.0
@@ -76,14 +75,6 @@ def set_automatic(status):
     last_change = 0
 
 
-if args.threshold > -1 or args.hysteresis > -1:
-    print("""
-The --threshold and --hysteresis parameters have been deprecated.
-Use --on-threshold and --off-threshold instead!
-""")
-    sys.exit(1)
-
-
 fanshim = FanShim()
 fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
@@ -100,11 +91,11 @@ if args.noled:
     fanshim.set_light(0, 0, 0)
     led_busy.release()
 
-t = get_cpu_temp()
-if t >= args.threshold:
-    last_change = get_cpu_temp()
-    set_fan(True)
+if args.low_temp is None:
+    args.low_temp = args.off_threshold
 
+if args.high_temp is None:
+    args.high_temp = args.on_threshold
 
 if not args.nobutton:
     @fanshim.on_release()

@@ -17,12 +17,9 @@ PSUTIL_MIN_VERSION="5.6.7"
 ON_THRESHOLD_SET=false
 OFF_THRESHOLD_SET=false
 
-OLD_THRESHOLD=""
-OLD_HYSTERESIS=""
-
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
-USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> --venv <python_virtual_environment> (--preempt) (--noled) (--nobutton)"
+USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> --low-temp <n> --high-temp <n> --venv <python_virtual_environment> (--preempt) (--noled) (--nobutton)"
 
 # Convert Python path to absolute for systemd
 PYTHON=`type -P $PYTHON`
@@ -69,13 +66,13 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
-	-t|--threshold)
-		OLD_THRESHOLD="error"
+	-G|--low-temp)
+		LOW_TEMP="$2"
 		shift
 		shift
 		;;
-	-h|--hysteresis)
-		OLD_HYSTERESIS="error"
+	-R|--high-temp)
+		HIGH_TEMP="$2"
 		shift
 		shift
 		;;
@@ -132,12 +129,6 @@ set -- "${POSITIONAL_ARGS[@]}"
 
 EXTRA_ARGS=""
 
-if [ "$OLD_THRESHOLD" == "error" ] || [ "$OLD_HYSTERESIS" == "error" ]; then
-	printf "The --threshold and --hysteresis parameters are deprecated.\n"
-	printf "Use --off-threshold and --on-threshold instead.\n"
-	exit 1
-fi
-
 if [ "$PREEMPT" == "yes" ]; then
 	EXTRA_ARGS+=' --preempt'
 fi
@@ -168,11 +159,20 @@ if ! [ "$2" == "" ]; then
 	(( OFF_THRESHOLD = ON_THRESHOLD - $2 ))
 fi
 
+if [ "$LOW_TEMP" == "" ]; then
+    LOW_TEMP=$OFF_THRESHOLD
+fi
+
+if [ "$HIGH_TEMP" == "" ]; then
+    HIGH_TEMP=$ON_THRESHOLD
+fi
 
 cat << EOF
 Setting up with:
 Off Threshold:  $OFF_THRESHOLD C
 On Threshold:   $ON_THRESHOLD C
+Low Temp:       $LOW_TEMP C
+High Temp:      $HIGH_TEMP C
 Delay:          $DELAY seconds
 Preempt:        $PREEMPT
 Disable LED:    $NOLED
@@ -195,7 +195,7 @@ After=multi-user.target
 [Service]
 Type=simple
 WorkingDirectory=$(pwd)
-ExecStart=$PYTHON $(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --delay $DELAY --brightness $BRIGHTNESS $EXTRA_ARGS
+ExecStart=$PYTHON $(pwd)/automatic.py --on-threshold $ON_THRESHOLD --off-threshold $OFF_THRESHOLD --low-temp $LOW_TEMP --high-temp $HIGH_TEMP --delay $DELAY --brightness $BRIGHTNESS $EXTRA_ARGS
 Restart=on-failure
 
 [Install]
