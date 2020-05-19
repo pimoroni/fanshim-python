@@ -10,6 +10,7 @@ POSITIONAL_ARGS=()
 NOLED="no"
 NOBUTTON="no"
 BRIGHTNESS=255
+EXTCOLOURS="no"
 PYTHON="python3"
 PIP="pip3"
 PSUTIL_MIN_VERSION="5.6.7"
@@ -19,7 +20,7 @@ OFF_THRESHOLD_SET=false
 
 SERVICE_PATH=/etc/systemd/system/pimoroni-fanshim.service
 
-USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> --low-temp <n> --high-temp <n> --venv <python_virtual_environment> (--preempt) (--noled) (--nobutton)"
+USAGE="sudo ./install-service.sh --off-threshold <n> --on-threshold <n> --delay <n> --brightness <n> --low-temp <n> --high-temp <n> --venv <python_virtual_environment> (--preempt) (--noled) (--nobutton) (--extended-colours)"
 
 # Convert Python path to absolute for systemd
 PYTHON=`type -P $PYTHON`
@@ -93,6 +94,15 @@ while [[ $# -gt 0 ]]; do
 		shift
 		shift
 		;;
+	-x|--extended-colours)
+		if [ "$2" == "yes" ] || [ "$2" == "no" ]; then
+			EXTCOLOURS="$2"
+			shift
+		else
+			EXTCOLOURS="yes"
+		fi
+		shift
+		;;
 	*)
 		if [[ $1 == -* ]]; then
 			printf "Unrecognised option: $1\n";
@@ -141,6 +151,10 @@ if [ "$NOBUTTON" == "yes" ]; then
 	EXTRA_ARGS+=' --nobutton'
 fi
 
+if [ "$EXTCOLOURS" == "yes" ]; then
+	EXTRA_ARGS+=' --extended-colours'
+fi
+
 if ! [ "$1" == "" ]; then
 	if [ $ON_THRESHOLD_SET ]; then
 		printf "Refusing to overwrite explicitly set On Threshold ($ON_THRESHOLD) with positional argument!\n"
@@ -169,15 +183,16 @@ fi
 
 cat << EOF
 Setting up with:
-Off Threshold:  $OFF_THRESHOLD C
-On Threshold:   $ON_THRESHOLD C
-Low Temp:       $LOW_TEMP C
-High Temp:      $HIGH_TEMP C
-Delay:          $DELAY seconds
-Preempt:        $PREEMPT
-Disable LED:    $NOLED
-Disable Button: $NOBUTTON
-Brightness:     $BRIGHTNESS
+Off Threshold:    $OFF_THRESHOLD C
+On Threshold:     $ON_THRESHOLD C
+Low Temp:         $LOW_TEMP C
+High Temp:        $HIGH_TEMP C
+Delay:            $DELAY seconds
+Preempt:          $PREEMPT
+Disable LED:      $NOLED
+Disable Button:   $NOBUTTON
+Brightness:       $BRIGHTNESS
+Extended Colours: $EXTCOLOURS
 
 To change these options, run:
 $USAGE

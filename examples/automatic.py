@@ -20,6 +20,7 @@ parser.add_argument('--verbose', action='store_true', default=False, help='Outpu
 parser.add_argument('--nobutton', action='store_true', default=False, help='Disable button input')
 parser.add_argument('--noled', action='store_true', default=False, help='Disable LED control')
 parser.add_argument('--brightness', type=float, default=255.0, help='LED brightness, from 0 to 255')
+parser.add_argument('--extended-colours', action='store_true', default=False, help='Extend LED colours for outside of normal low to high range')
 
 args = parser.parse_args()
 
@@ -34,13 +35,13 @@ def clean_exit(signum, frame):
 def update_led_temperature(temp):
     led_busy.acquire()
     temp = float(temp)
-    if temp < args.low_temp:
+    if temp < args.low_temp and args.extended_colours:
         # Between minimum temp and low temp, set LED to blue through to green
         temp -= min_temp
         temp /= float(args.low_temp - min_temp)
         temp  = max(0, temp)
         hue   = (120.0 / 360.0) + ((1.0 - temp) * 120.0 / 360.0)
-    elif temp > args.high_temp:
+    elif temp > args.high_temp and args.extended_colours:
         # Between high temp and maximum temp, set LED to red through to magenta
         temp -= args.high_temp
         temp /= float(max_temp - args.high_temp)
@@ -50,6 +51,7 @@ def update_led_temperature(temp):
         # In the normal low temp to high temp range, set LED to green through to red
         temp -= args.low_temp
         temp /= float(args.high_temp - args.low_temp)
+        temp = max(0, min(1, temp))
         hue   = (1.0 - temp) * 120.0 / 360.0
 
     r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(hue, 1.0, args.brightness / 255.0)]
