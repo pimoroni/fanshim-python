@@ -34,13 +34,25 @@ def clean_exit(signum, frame):
 def update_led_temperature(temp):
     led_busy.acquire()
     temp = float(temp)
-    temp -= args.low_temp
-    temp /= float(args.high_temp - args.low_temp)
-    temp = max(0, min(1, temp))
-    temp = 1.0 - temp
-    temp *= 120.0
-    temp /= 360.0
-    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, args.brightness / 255.0)]
+    if temp < args.low_temp:
+        # Between minimum temp and low temp, set LED to blue through to green
+        temp -= min_temp
+        temp /= float(args.low_temp - min_temp)
+        temp  = max(0, temp)
+        hue   = (120.0 / 360.0) + ((1.0 - temp) * 120.0 / 360.0)
+    elif temp > args.high_temp:
+        # Between high temp and maximum temp, set LED to red through to magenta
+        temp -= args.high_temp
+        temp /= float(max_temp - args.high_temp)
+        temp  = min(1, temp)
+        hue   = 1.0 - (temp * 60.0 / 360.0)
+    else:
+        # In the normal low temp to high temp range, set LED to green through to red
+        temp -= args.low_temp
+        temp /= float(args.high_temp - args.low_temp)
+        hue   = (1.0 - temp) * 120.0 / 360.0
+
+    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(hue, 1.0, args.brightness / 255.0)]
     fanshim.set_light(r, g, b)
     led_busy.release()
 
@@ -84,6 +96,8 @@ led_busy = Lock()
 enable = False
 is_fast = False
 last_change = 0
+min_temp = 30
+max_temp = 85
 signal.signal(signal.SIGTERM, clean_exit)
 
 if args.noled:
