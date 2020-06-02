@@ -1,4 +1,3 @@
-#!/bin/bash
 
 CONFIG=/boot/config.txt
 DATESTAMP=`date "+%Y-%M-%d-%H-%M-%S"`
