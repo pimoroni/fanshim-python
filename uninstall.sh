@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 LIBRARY_VERSION=`cat library/setup.cfg | grep version | awk -F" = " '{print $2}'`
 LIBRARY_NAME=`cat library/setup.cfg | grep name | awk -F" = " '{print $2}'`
@@ -12,7 +12,7 @@ fi
 
 cd library
 
-printf "Unnstalling for Python 2..\n"
+printf "Unnstalling for Python 3..\n"
 pip uninstall $LIBRARY_NAME
 
 if [ -f "/usr/bin/pip3" ]; then
