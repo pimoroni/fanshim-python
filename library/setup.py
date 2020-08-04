@@ -24,7 +24,4 @@ SOFTWARE.
 
 from setuptools import setup
 
-setup(
-    packages=['fanshim'],
-    install_requires=['plasmalights']
-)
+setup()

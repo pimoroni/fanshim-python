@@ -1,9 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-try:
-    from plasma import legacy as plasma
-except ImportError:
-    import plasma
+import apa102
 import atexit
 from threading import Thread
 
@@ -27,16 +24,14 @@ class FanShim():
         self._button_hold_time = 2.0
         self._t_poll = None
 
-        atexit.register(self._cleanup)
-
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._pin_fancontrol, GPIO.OUT)
         GPIO.setup(self._pin_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        plasma.set_clear_on_exit(True)
-        plasma.set_light_count(1)
-        plasma.set_light(0, 0, 0, 0)
+        self._led = apa102.APA102(1, 15, 14, None, brightness=0.05)
+
+        atexit.register(self._cleanup)
 
     def start_polling(self):
         """Start button polling."""
@@ -109,7 +104,7 @@ class FanShim():
         GPIO.output(self._pin_fancontrol, True if fan_state else False)
         return True if fan_state else False
 
-    def set_light(self, r, g, b):
+    def set_light(self, r, g, b, brightness=None):
         """Set LED.
 
         :param r: Red (0-255)
@@ -117,11 +112,15 @@ class FanShim():
         :param b: Blue (0-255)
 
         """
-        plasma.set_light(0, r, g, b)
-        plasma.show()
+        self._led.set_pixel(0, r, g, b)
+        if brightness is not None:
+            self._led.set_brightness(0, brightness)
+        self._led.show()
 
     def _cleanup(self):
         self.stop_polling()
+
+        self.set_light(0, 0, 0)
 
     def _run(self):
         self._running = True
