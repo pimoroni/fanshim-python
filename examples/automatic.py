@@ -10,17 +10,17 @@ import sys
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=float, default=-1, help='Temperature threshold in degrees C to enable fan')
-parser.add_argument('--hysteresis', type=float, default=-1, help='Distance from threshold before fan is disabled')
-
 parser.add_argument('--off-threshold', type=float, default=55.0, help='Temperature threshold in degrees C to enable fan')
 parser.add_argument('--on-threshold', type=float, default=65.0, help='Temperature threshold in degrees C to disable fan')
+parser.add_argument('--low-temp', type=float, default=None, help='Temperature at which the LED is greeen')
+parser.add_argument('--high-temp', type=float, default=None, help='Temperature for which LED is red')
 parser.add_argument('--delay', type=float, default=2.0, help='Delay, in seconds, between temperature readings')
 parser.add_argument('--preempt', action='store_true', default=False, help='Monitor CPU frequency and activate cooling premptively')
 parser.add_argument('--verbose', action='store_true', default=False, help='Output temp and fan status messages')
 parser.add_argument('--nobutton', action='store_true', default=False, help='Disable button input')
 parser.add_argument('--noled', action='store_true', default=False, help='Disable LED control')
 parser.add_argument('--brightness', type=float, default=255.0, help='LED brightness, from 0 to 255')
+parser.add_argument('--extended-colours', action='store_true', default=False, help='Extend LED colours for outside of normal low to high range')
 
 args = parser.parse_args()
 
@@ -35,13 +35,26 @@ def clean_exit(signum, frame):
 def update_led_temperature(temp):
     led_busy.acquire()
     temp = float(temp)
-    temp -= args.off_threshold
-    temp /= float(args.on_threshold - args.off_threshold)
-    temp = max(0, min(1, temp))
-    temp = 1.0 - temp
-    temp *= 120.0
-    temp /= 360.0
-    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(temp, 1.0, args.brightness / 255.0)]
+    if temp < args.low_temp and args.extended_colours:
+        # Between minimum temp and low temp, set LED to blue through to green
+        temp -= min_temp
+        temp /= float(args.low_temp - min_temp)
+        temp  = max(0, temp)
+        hue   = (120.0 / 360.0) + ((1.0 - temp) * 120.0 / 360.0)
+    elif temp > args.high_temp and args.extended_colours:
+        # Between high temp and maximum temp, set LED to red through to magenta
+        temp -= args.high_temp
+        temp /= float(max_temp - args.high_temp)
+        temp  = min(1, temp)
+        hue   = 1.0 - (temp * 60.0 / 360.0)
+    else:
+        # In the normal low temp to high temp range, set LED to green through to red
+        temp -= args.low_temp
+        temp /= float(args.high_temp - args.low_temp)
+        temp = max(0, min(1, temp))
+        hue   = (1.0 - temp) * 120.0 / 360.0
+
+    r, g, b = [int(c * 255.0) for c in colorsys.hsv_to_rgb(hue, 1.0, args.brightness / 255.0)]
     fanshim.set_light(r, g, b)
     led_busy.release()
 
@@ -76,14 +89,6 @@ def set_automatic(status):
     last_change = 0
 
 
-if args.threshold > -1 or args.hysteresis > -1:
-    print("""
-The --threshold and --hysteresis parameters have been deprecated.
-Use --on-threshold and --off-threshold instead!
-""")
-    sys.exit(1)
-
-
 fanshim = FanShim()
 fanshim.set_hold_time(1.0)
 fanshim.set_fan(False)
@@ -93,6 +98,8 @@ led_busy = Lock()
 enable = False
 is_fast = False
 last_change = 0
+min_temp = 30
+max_temp = 85
 signal.signal(signal.SIGTERM, clean_exit)
 
 if args.noled:
@@ -100,11 +107,11 @@ if args.noled:
     fanshim.set_light(0, 0, 0)
     led_busy.release()
 
-t = get_cpu_temp()
-if t >= args.threshold:
-    last_change = get_cpu_temp()
-    set_fan(True)
+if args.low_temp is None:
+    args.low_temp = args.off_threshold
 
+if args.high_temp is None:
+    args.high_temp = args.on_threshold
 
 if not args.nobutton:
     @fanshim.on_release()
