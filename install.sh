@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONFIG=/boot/config.txt
-DATESTAMP=`date "+%Y-%M-%d-%H-%M-%S"`
+DATESTAMP=`date "+%Y-%m-%d-%H-%M-%S"`
 CONFIG_BACKUP=false
 
 if [ $? -ne 0 ]; then
