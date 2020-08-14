@@ -8,6 +8,13 @@ import pytest
 
 
 @pytest.fixture(scope='function', autouse=False)
+def FanShim():
+    import fanshim
+    yield fanshim.FanShim
+    del sys.modules['fanshim']
+
+
+@pytest.fixture(scope='function', autouse=False)
 def GPIO():
     """Mock RPi.GPIO module."""
     GPIO = mock.MagicMock()
@@ -21,12 +28,12 @@ def GPIO():
 
 
 @pytest.fixture(scope='function', autouse=False)
-def plasma():
-    """Mock plasma module."""
-    plasma = mock.MagicMock()
-    sys.modules['plasma'] = plasma
-    yield plasma
-    del sys.modules['plasma']
+def apa102():
+    """Mock APA102 module."""
+    apa102 = mock.MagicMock()
+    sys.modules['apa102'] = apa102
+    yield apa102
+    del sys.modules['apa102']
 
 
 @pytest.fixture(scope='function', autouse=False)
