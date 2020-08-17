@@ -1,3 +1,11 @@
+0.0.5
+-----
+
+* Replace Plasma API with APA102 library
+* Add support for setting LED global brightness
+* Add support for disabling button and/or LED
+* Move packages/requires to setup.config, minimum version now Python 2.7
+
 0.0.4
 -----
 
