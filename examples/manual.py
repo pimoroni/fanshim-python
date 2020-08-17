@@ -11,7 +11,7 @@ fanshim.set_fan(False)
 
 try:
     os.unlink(FIFO_NAME)
-except IOError:
+except (IOError, OSError):
     pass
 
 os.mkfifo(FIFO_NAME)
