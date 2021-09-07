@@ -1,5 +1,5 @@
-LIBRARY_VERSION=$(shell cat library/setup.cfg | grep version | awk -F" = " '{print $$2}')
-LIBRARY_NAME=$(shell cat library/setup.cfg | grep name | awk -F" = " '{print $$2}')
+LIBRARY_VERSION=$(shell grep version library/setup.cfg | awk -F" = " '{print $$2}')
+LIBRARY_NAME=$(shell grep name library/setup.cfg | awk -F" = " '{print $$2}')
 
 .PHONY: usage install uninstall
 usage:
@@ -9,7 +9,7 @@ usage:
 	@echo "install:       install the library locally from source"
 	@echo "uninstall:     uninstall the local library"
 	@echo "check:         peform basic integrity checks on the codebase"
-	@echo "python-readme: generate library/README.rst from README.md"
+	@echo "python-readme: generate library/README.md from README.md + library/CHANGELOG.txt"
 	@echo "python-wheels: build python .whl files for distribution"
 	@echo "python-sdist:  build python source distribution"
 	@echo "python-clean:  clean python build and dist directories"
@@ -27,7 +27,7 @@ check:
 	@echo "Checking for trailing whitespace"
 	@! grep -IUrn --color "[[:blank:]]$$" --exclude-dir=sphinx --exclude-dir=.tox --exclude-dir=.git --exclude=PKG-INFO
 	@echo "Checking for DOS line-endings"
-	@! grep -IUrn --color "" --exclude-dir=sphinx --exclude-dir=.tox --exclude-dir=.git --exclude=Makefile
+	@! grep -lIUrn --color "" --exclude-dir=sphinx --exclude-dir=.tox --exclude-dir=.git --exclude=Makefile
 	@echo "Checking library/CHANGELOG.txt"
 	@cat library/CHANGELOG.txt | grep ^${LIBRARY_VERSION}
 	@echo "Checking library/${LIBRARY_NAME}/__init__.py"
@@ -36,13 +36,13 @@ check:
 tag:
 	git tag -a "v${LIBRARY_VERSION}" -m "Version ${LIBRARY_VERSION}"
 
-python-readme: library/README.rst
+python-readme: library/README.md
 
 python-license: library/LICENSE.txt
 
-library/README.rst: README.md library/CHANGELOG.txt
+library/README.md: README.md library/CHANGELOG.txt
 	cp README.md library/README.md
-	echo "" >> library/README.md
+	printf "\n# Changelog\n" >> library/README.md
 	cat library/CHANGELOG.txt >> library/README.md
 
 library/LICENSE.txt: LICENSE
