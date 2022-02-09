@@ -59,6 +59,11 @@ def update_led_temperature(temp):
     led_busy.release()
 
 
+def update_status_file(status):
+    with open("/var/log/fanshim_status", "w") as f:
+        f.write(str(int(status)))
+
+
 def get_cpu_temp():
     t = psutil.sensors_temperatures()
     for x in ['cpu-thermal', 'cpu_thermal']:
@@ -155,6 +160,8 @@ try:
 
             if set_fan(enable):
                 last_change = t
+
+        update_status_file(enable)
 
         if not args.noled:
             update_led_temperature(t)
