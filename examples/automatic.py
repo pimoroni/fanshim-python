@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from gpiozero import CPUTemperature
 from fanshim import FanShim
 from threading import Lock
 import colorsys
@@ -60,12 +61,8 @@ def update_led_temperature(temp):
 
 
 def get_cpu_temp():
-    t = psutil.sensors_temperatures()
-    for x in ['cpu-thermal', 'cpu_thermal']:
-        if x in t:
-            return t[x][0].current
-    print("Warning: Unable to get CPU temperature!")
-    return 0
+    cpu = CPUTemperature()
+    return cpu.temperature
 
 
 def get_cpu_freq():
